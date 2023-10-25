@@ -193,3 +193,172 @@ export const markTaskAsNotCompleted = asyncHandler(async (req, res, next) => {
     message: "Task updated successfully",
   });
 });
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/subtasks
+ * @description  Add subtasks to a task
+ * @method POST
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const addSubTasks = asyncHandler(async (req, res, next) => {
+  const { title, completed } = req.body;
+
+  const taskId = req.params.id;
+
+  if (!taskId) {
+    res.status(400);
+    throw new Error("Task id is required");
+  }
+
+  const task = await Task.findById(taskId);
+
+  task.subTasks.push({ title, completed });
+
+  await task.save();
+
+  if (!title) {
+    res.status(400);
+    throw new Error("Title is required");
+  }
+
+  res.status(200).json({
+    data: task,
+    success: true,
+    message: "Subtask added successfully",
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/subtasks/:subtaskId
+ * @description  Get single subtasks from task
+ * @method GET
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const getSingleSubTask = asyncHandler(async (req, res, next) => {
+  const { id, subTaskId } = req.params;
+
+  if (!id) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+
+  if (!subTaskId) {
+    res.status(400);
+    throw new Error("Subtask not found");
+  }
+
+  const task = await Task.findById(id);
+
+  const subtask = task.subTasks.id(subTaskId);
+
+  res.status(200).json({
+    data: subtask,
+    success: true,
+    message: "Subtask fetched successfully",
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/subtasks/
+ * @description  Get all subtasks from task
+ * @method GET
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const getAllSubTasks = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+
+  const task = await Task.findById(id);
+
+  const subTask = task.subTasks;
+
+  res.status(200).json({
+    data: subTask,
+    success: true,
+    message: "Subtask fetched successfully",
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/subtasks/:subtaskId
+ * @description  Delete subtasks from task
+ * @method DELETE
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const deleteSubTask = asyncHandler(async (req, res, next) => {
+  const { id, subTaskId } = req.params;
+
+  if (!id) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+
+  if (!subTaskId) {
+    res.status(400);
+    throw new Error("Subtask not found");
+  }
+
+  const task = await Task.findById(id);
+
+  task.subTasks = task.subTasks.filter((subtask) => {
+    return subtask._id.toString() !== subTaskId.toString();
+  });
+
+  await task.save();
+  res.status(400).json({
+    noOfSubTask: task.subTasks.length,
+    task,
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/subtasks/:subtaskId
+ * @description  Update subtasks from task
+ * @method PUT
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const updateSubTask = asyncHandler(async (req, res, next) => {
+  const { id, subTaskId } = req.params;
+  const { title, completed } = req.body;
+
+  if (!id) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+
+  if (!subTaskId) {
+    res.status(400);
+    throw new Error("Subtask not found");
+  }
+
+  const task = await Task.findById(id);
+
+  const subTask = task.subTasks.id(subTaskId);
+
+  if (title) {
+    subTask.title = title;
+  }
+  if (completed) {
+    subTask.completed = completed;
+  }
+
+  await task.save();
+
+  res.status(200).json({
+    task,
+
+  });
+});

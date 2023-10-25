@@ -133,3 +133,63 @@ export const deleteTask = asyncHandler(async (req, res, next) => {
     message: "Task deleted successfully",
   });
 });
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/completed
+ * @description  Mark task as completed
+ * @method PUT
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const markTaskAsCompleted = asyncHandler(async (req, res, next) => {
+  const { completed } = req.body;
+  const taskId = await Task.findById(req.params.id);
+
+  if (!taskId) {
+    res.status(404);
+    throw new Error("Task not found");
+  }
+
+  const task = await Task.findByIdAndUpdate(
+    taskId,
+    { completed: true },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    data: task,
+    success: true,
+    message: "Task updated successfully",
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/tasks/:id/notcompleted
+ * @description  Mark task as not completed
+ * @method PUT
+ * @params
+ * @returns
+ *************************************************************************/
+
+export const markTaskAsNotCompleted = asyncHandler(async (req, res, next) => {
+  const { completed } = req.body;
+  const taskId = await Task.findById(req.params.id);
+
+  if (!taskId) {
+    res.status(404);
+    throw new Error("Task not found");
+  }
+
+  const task = await Task.findByIdAndUpdate(
+    taskId,
+    { completed: false },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    data: task,
+    success: true,
+    message: "Task updated successfully",
+  });
+});

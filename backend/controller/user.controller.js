@@ -140,6 +140,11 @@ export const getUsers = asyncHandler(async (req, res, next) => {
 export const getUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
+  if(!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
   res.status(200).json({
     length: user.length,
     user,
@@ -201,5 +206,43 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "User deleted successfully",
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/users/logout
+ * @description Logout user
+ * @params
+ * @method GET
+ * @returns
+ *************************************************************************/
+
+export const logoutUser = asyncHandler(async (req, res, next) => {
+  res.cookie("token", null, {
+    httpOnly: true,
+    maxAge: 0, // 30 days
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "User logged out successfully",
+  });
+});
+
+/************************************************************************
+ * @route http://localhost:4000/api/v1/users/profile
+ * @description Get User profile
+ * @params
+ * @method GET
+ * @returns User object
+ *************************************************************************/
+
+export const getUserProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    user,
+    message: "User profile fetched successfully",
   });
 });

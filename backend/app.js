@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import { dbConnect } from "./config/db.js";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 
 dbConnect();
 
@@ -17,6 +18,7 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 app.use(express.json());
 // Parse JSON requests
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // Parse URL-encoded requests
 app.use(bodyParser.urlencoded({ extended: true }));

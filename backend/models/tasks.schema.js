@@ -22,8 +22,15 @@ const taskSchema = new mongoose.Schema({
   },
   subTasks: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "task",
+      title: {
+        type: String,
+        // unique: true,
+        trim: true,
+      },
+      completed: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
   user: {

@@ -12,6 +12,7 @@ const app = express();
 
 // routes import
 import userRoutes from "./routes/userRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1", userRoutes);
+app.use("/api/v1", taskRoutes);
 
 
 // error handler

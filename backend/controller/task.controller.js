@@ -10,7 +10,7 @@ import asyncHandler from "../services/asyncHandler.js";
  *************************************************************************/
 
 export const createTask = asyncHandler(async (req, res, next) => {
-  const { title, description, priority, subTasks } = req.body;
+  const { title, description, priority, subTasks, completed } = req.body;
 
   if (!title) {
     res.status(400);
@@ -28,6 +28,7 @@ export const createTask = asyncHandler(async (req, res, next) => {
     description,
     priority,
     subTasks,
+    completed,
     user: req.user.id,
   });
 

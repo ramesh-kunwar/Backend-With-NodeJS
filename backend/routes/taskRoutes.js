@@ -16,7 +16,7 @@ import {
 } from "../controller/task.controller.js";
 const router = express.Router();
 
-router.route("/tasks").post(isLoggedIn, createTask).get(isLoggedIn, getTasks);
+router.route("/tasks").post(isLoggedIn, createTask).get( getTasks);
 
 router
   .route("/tasks/:id")

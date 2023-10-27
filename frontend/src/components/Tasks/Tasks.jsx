@@ -2,21 +2,16 @@ import { Link } from "react-router-dom";
 import Container from "../common/Container";
 import React, { useEffect, useState } from "react";
 import AddTaskForm from "./AddTaskForm";
+import TaskDetailModel from "./TaskDetailModel";
+import { useSelector } from "react-redux";
+import { useGetTasksQuery } from "../../store/taskApiSlice";
 
 const Tasks = () => {
-  const [tasks, setTasks] = useState([{}]);
+  // const [tasks, setTasks] = useState([{}]);
   const [completed, setCompleted] = useState(false);
+  const [openTaskDetailModel, setOpenTaskDetailModel] = useState(false);
 
-  useEffect(() => {
-    function fetchTasks() {
-      fetch("api/v1/tasks")
-        .then((res) => res.json())
-        .then((data) => setTasks(data));
-    }
-
-    fetchTasks();
-  }, []);
-  console.log(tasks?.data);
+  const { data: tasks, isError, isLoading } = useGetTasksQuery();
 
   const handleChecked = (e) => {
     const checked = e.target.checked;
@@ -53,18 +48,24 @@ const Tasks = () => {
     }
     deleteTasks();
   };
+
+  const handleTaskDetailModel = (task) => {
+    setOpenTaskDetailModel((prev) => !prev);
+  };
   return (
     <Container>
-        <AddTaskForm />
+      <AddTaskForm />
       {tasks?.data?.map((task) => {
         return (
           <div
+            onClick={() => handleTaskDetailModel(task)}
             onMouseOver={(e) => handleMouseOver(e)}
             onMouseOut={(e) => handleMouseOut(e)}
             key={task?._id}
-            className="flex items- px-4  py-4 border border-gray-200 rounded my-2 "
+            className="flex items- px-4  py-4 border border-gray-200 rounded my-2  cursor-pointer hover:shadow-md"
           >
-            <input
+            {openTaskDetailModel && <TaskDetailModel task={task} />}
+            {/* <input
               id={task?._id}
               type="checkbox"
               value={task?.completed}
@@ -72,7 +73,18 @@ const Tasks = () => {
               name="bordered-checkbox"
               checked={task?.completed}
               className="w-4 h-5  block text-blue-600 bg-gray-100 border-gray-300  focus:ring-blue-500  focus:ring-2 "
+            /> */}
+
+            <input
+              id={task?._id}
+              type="checkbox"
+              value={task?.completed}
+              onChange={handleChecked}
+              name="bordered-checkbox"
+              checked={task?.completed}
+              className="mt-1 checked:bg-blue-500 checked:border-transparent rounded-full w-6 h-6"
             />
+
             <div className="w-full ml-2 text-sm font-medium text-gray-900 ">
               <p>{task?.title}</p>
               {/* <p>{task?.subTasks[0]?.title}</p> */}
